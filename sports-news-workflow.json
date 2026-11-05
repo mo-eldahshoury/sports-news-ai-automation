@@ -1,0 +1,182 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 11,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "f9c7bf47-ff01-476d-8bad-42123d7c6997",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://sportstechie.net/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -16
+      ],
+      "id": "6e0af60f-e8c6-49f9-95b6-f5e34fb11221",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -16
+      ],
+      "id": "d3cd572c-8e50-445d-82fb-2bdff8cf6acb",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=output the following in this format:\n\ntitle:{{ $json.title }}\n\ncontent: summarize the following into the least characters possible without disregarding important information {{ $json.contentSnippet }}\n\nlink:{{ $json.link }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        416,
+        -16
+      ],
+      "id": "709c26e4-c2fe-4be7-9e03-c5b433aff092",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        192
+      ],
+      "id": "a7c6970c-326c-4ea3-baed-b4c1526ec07e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3bTPN59Zpf2liSFn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=1396454402",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        -16
+      ],
+      "id": "1a37b279-2bbc-4099-b156-eb081dad9da3",
+      "name": "Send a text message",
+      "webhookId": "f1ca9358-70ca-431e-b2be-c3428a2f9ad6",
+      "credentials": {
+        "telegramApi": {
+          "id": "qjvW1BC6KumCNDYF",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "34eaf3db-b3ce-48fc-9077-a69a365b69b1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5581786e656fc974f9663fa02324dd7b1446ec9afdf93d8f9052480329fcf237"
+  },
+  "nodeGroups": [],
+  "id": "jQs5SyKuGHdtWygB",
+  "tags": []
+}
