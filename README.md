@@ -1,4 +1,4 @@
-# ⚽ Automated Sports News Summarizer (n8n & Gemini AI)
+# ⚽ Automated Sports News Summarizer (n8n & Gemini AI) 
 
 An automated workflow built with **n8n** that fetches sports news via RSS feeds, processes and summarizes the content using **Google Gemini LLM**, and sends formatted digests directly to Telegram.
 
